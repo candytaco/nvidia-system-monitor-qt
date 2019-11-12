@@ -5,12 +5,17 @@
 
 Task Manager for Linux for Nvidia graphics cards
 
+![](pics/utilization.png)
+
+![](pics/processes.png)
+
 # Dependencies
 Qt 5.11+ is required.
 * Use `sudo apt install qtdeclarative5-dev` to install QT dependencies.
-* Visit https://www.qt.io/download-open-source to download the QT installer. Install libraries for any version of Qt 5.11+
+* Visit https://www.qt.io/download-open-source to download the QT installer at the bottom of the page. 
+Install libraries for any version of Qt 5.11+ to whereever, e.g. `/opt/Qt`.
 
-Also in the system must be available `nvidia-smi`
+* `nvidia-smi`
 
 # Building
 ```
@@ -19,7 +24,7 @@ make -j4
 ```
 If making fails, manually edit the `CMakeCache.txt` file to point `Qt5Core_DIR`, `Qt5Gui_DIR`, and `Qt5Widgets_DIR` to the correct places. They will be under `[Qt location]/5.XX.X/gcc_64/lib/cmake/`.
 
-To launch type `cmake-build-release/qnvsm`
+To launch type `qnvsm`
 
 The option -j describes the number of parallel processes for the build. In this case make will try to use 4 cores for the build.
 
@@ -37,9 +42,6 @@ gpuColor    0       0    0      255
 gpuColor    1       0    255    0
 gpuColor    2       255  0      0
 ```
-
-# Screenshots
-[Open SCREENSHOTS.md](SCREENSHOTS.md)
 
 # Donate
 [Open DONATE.md](DONATE.md)
