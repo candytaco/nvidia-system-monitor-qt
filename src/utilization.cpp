@@ -11,7 +11,7 @@
 #define graphHeightCoef 9
 int grapthStartY, grapthEndY, width;
 
-void drawGrid(QWidget *widget, QPainter *p) {
+void drawGrid(QWidget *widget, QPainter *p, const char *name) {
     QFontMetrics fm(qApp->font());
     int x0, y0 = fm.height(), graphHeight = graphHeightCoef * y0;
     width = widget->size().width() - 4;
@@ -25,7 +25,7 @@ void drawGrid(QWidget *widget, QPainter *p) {
     }
     
     p->setPen(QApplication::palette().text().color());
-    p->drawText(0, y0, (toString(UPDATE_DELAY / 1000.0f) + " sec step").c_str());
+    p->drawText(0, y0, (name + toString(UPDATE_DELAY / 1000.0f) + " sec step").c_str());
     p->drawText(0, grapthEndY + y0, (toString(GRAPH_LENGTH / 1000.0f) + " sec").c_str());
     
     QString text = "100%";
@@ -185,10 +185,10 @@ void MemoryUtilizationWorker::receiveData() {
     std::vector<std::string> lines = split(exec(NVSMI_CMD_MEM_UTILIZATION), "\n"), data;
     for (size_t i = 1; i < lines.size() - 1; i++) {
         data = split(lines[i], ", ");
-        udata[i - 1].level = std::atoi(split(data[0], " ")[0].c_str());
         memoryData[i - 1].total = std::atoi(split(data[1], " ")[0].c_str());
         memoryData[i - 1].free = std::atoi(split(data[2], " ")[0].c_str());
         memoryData[i - 1].used = std::atoi(split(data[3], " ")[0].c_str());
+        udata[i - 1].level = memoryData[i - 1].used * 100 / memoryData[i - 1].total;
     }
 }
 
@@ -196,7 +196,7 @@ void UtilizationWidget::paintEvent(QPaintEvent *) {
     QPainter p;
     p.begin(this);
     p.setRenderHint(QPainter::Antialiasing);
-    drawGrid(this, &p);
+    drawGrid(this, &p, this->GetName());
     QMutexLocker locker(&worker->mutex);
     drawGraph(worker, &p);
     drawStatusObjects(statusObjectsAreas, worker->udata, &p);

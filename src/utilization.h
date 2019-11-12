@@ -62,6 +62,8 @@ public:
     std::vector<QRect> statusObjectsAreas;
     UtilizationWorker *worker;
 
+	virtual const char *GetName() const {return "widget ";};
+
     ~UtilizationWidget() override;
 
     void paintEvent(QPaintEvent*) override;
@@ -74,6 +76,8 @@ class GPUUtilization : public UtilizationWidget {
 public:
     GPUUtilization();
 
+	virtual const char *GetName() const override {return "GPU use ";};
+
     void mouseMoveEvent(QMouseEvent *event) override;
 };
 
@@ -81,10 +85,12 @@ class MemoryUtilization : public UtilizationWidget {
 public:
     MemoryUtilization();
 
+	virtual const char *GetName() const override {return "Memory use ";};
+
     void mouseMoveEvent(QMouseEvent *event) override;
 };
 
-void drawGrid(QWidget *widget, QPainter *p);
+void drawGrid(QWidget *widget, QPainter *p, char *name);
 void drawGraph(UtilizationWorker *worker, QPainter *p);
 void drawStatusObjects(std::vector<QRect> &statusObjectsAreas, UtilizationData *udata, QPainter *p);
 

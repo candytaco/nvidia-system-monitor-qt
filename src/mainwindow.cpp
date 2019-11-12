@@ -36,18 +36,12 @@ MainWindow::MainWindow(QWidget*) {
     glayout->addWidget(gutilization);
     glayout->setMargin(32);
     gwidget->setLayout(glayout);
-
-    auto *mwidget = new QWidget();
-    auto *mlayout = new QVBoxLayout;
     auto *mutilization = new MemoryUtilization;
-    mlayout->addWidget(mutilization);
-    mlayout->setMargin(32);
-    mwidget->setLayout(mlayout);
+    glayout->addWidget(mutilization);
     
     tabs = new QTabWidget();
     tabs->addTab(processes, "Processes");
     tabs->addTab(gwidget, "GPU Utilization");
-    tabs->addTab(mwidget, "Memory Utilization");
     layout->addWidget(tabs);
     
     auto *window = new QWidget();
