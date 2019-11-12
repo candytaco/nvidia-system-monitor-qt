@@ -6,23 +6,19 @@
 Task Manager for Linux for Nvidia graphics cards
 
 # Dependencies
-Qt 5.11+ is required for work.
-* If you are an ArchLinux user, you can install from [here](https://wiki.archlinux.org/index.php/qt#Installation).
-* If you are Ubuntu user, it can be installed with `sudo apt install qtdeclarative5-dev`.
+Qt 5.11+ is required.
+* Use `sudo apt install qtdeclarative5-dev` to install QT dependencies.
+* Visit https://www.qt.io/download-open-source to download the QT installer. Install libraries for any version of Qt 5.11+
 
 Also in the system must be available `nvidia-smi`
 
 # Building
-## ArchLinux
-You can install `nvidia-system-monitor-qt` directly from [AUR](https://aur.archlinux.org/packages/nvidia-system-monitor-qt/)
-<br>To launch enter `qnvsm` or just click on .desktop file
-
-## Other
 ```
-cmake -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles" -B cmake-build-release
-cd cmake-build-release
+cmake -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles"
 make -j4
 ```
+If making fails, manually edit the `CMakeCache.txt` file to point `Qt5Core_DIR`, `Qt5Gui_DIR`, and `Qt5Widgets_DIR` to the correct places. They will be under `[Qt location]/5.XX.X/gcc_64/lib/cmake/`.
+
 To launch type `cmake-build-release/qnvsm`
 
 The option -j describes the number of parallel processes for the build. In this case make will try to use 4 cores for the build.
