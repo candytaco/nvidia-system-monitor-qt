@@ -14,7 +14,10 @@ ProcessList::ProcessList(const std::string& name, const std::string& type,
 						 const std::string& vRAM)
 {
 	this->name = name;
-	this->type = type.compare("G\n") ? std::string("Graphics") : std::string("Compute");
+	if (type.length() > 1)
+		this->type = std::string("Compute + Graphics");
+	else
+		this->type = type.compare("G") == 0 ? std::string("Graphics") : std::string("Compute");
 	this->gpuIdx = gpuIdx;
 	this->pid = pid;
 	this->sm = sm;
