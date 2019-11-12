@@ -23,6 +23,19 @@ cmake -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles"
 make -j4
 ```
 If making fails, manually edit the `CMakeCache.txt` file to point `Qt5Core_DIR`, `Qt5Gui_DIR`, and `Qt5Widgets_DIR` to the correct places. They will be under `[Qt location]/5.XX.X/gcc_64/lib/cmake/`.
+Around line 180-ish in `CMakeCache.txt` you want these three things to be pointed at the Qt direction.
+For example, here Qt is installed to `/home/Qt`
+
+```
+//The directory containing a CMake configuration file for Qt5Core.
+Qt5Core_DIR:PATH=/home/Qt/5.12.5/gcc_64/lib/cmake/Qt5Core/
+   
+//The directory containing a CMake configuration file for Qt5Gui.
+Qt5Gui_DIR:PATH=/home/Qt/5.12.5/gcc_64/lib/cmake/Qt5Gui/
+
+//The directory containing a CMake configuration file for Qt5Widgets.
+Qt5Widgets_DIR:PATH=/home/Qt/5.12.5/gcc_64/lib/cmake/Qt5Widgets
+```
 
 To launch type `qnvsm`
 

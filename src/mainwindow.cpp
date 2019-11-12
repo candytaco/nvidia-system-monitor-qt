@@ -93,13 +93,13 @@ void MainWindow::help() {
         <b>Processes</b>
         <ul>
             <li>Name - process name</li>
-            <li>Type - "C" for Compute Process, "G" for Graphics Process, and "C+G" for the process having both Compute and Graphics contexts</li>
+            <li>Type - Compute, Graphics, or both?</li>
             <li>GPU ID - id of GPU in which process running</li>
-            <li>pid - process id</li>
-            <li>sm [%]</li>
-            <li>mem [%]</li>
-            <li>enc [%]</li>
-            <li>dec [%]</li>
+            <li>Process ID - process id</li>
+            <li>Compute Usage [%]</li>
+            <li>GPU memory usage [%]</li>
+            <li>Encoding use [%]</li>
+            <li>Decoding use [%]</li>
         </ul><br>
         <b>GPU Utilization</b><br>This section displays a graph of gpu utilization.
         <br><br><b>Memory Utilization</b><br>This section displays a graph of memory utilization.
