@@ -90,7 +90,7 @@ public:
     void mouseMoveEvent(QMouseEvent *event) override;
 };
 
-void drawGrid(QWidget *widget, QPainter *p, char *name);
+void drawGrid(QWidget *widget, QPainter *p, const char *name);
 void drawGraph(UtilizationWorker *worker, QPainter *p);
 void drawStatusObjects(std::vector<QRect> &statusObjectsAreas, UtilizationData *udata, QPainter *p);
 
