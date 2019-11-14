@@ -22,6 +22,7 @@ struct UtilizationData
 	int level = 0; 	// current usage out of maximum
 	int avgLevel = 0, minLevel = 0, maxLevel = 0;
 	double maximum = 100;
+	std::string name;
 };
 
 struct MemoryData

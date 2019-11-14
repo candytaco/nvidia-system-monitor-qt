@@ -76,7 +76,7 @@ void drawStatusObjects(std::vector<QRect>& statusObjectsAreas, UtilizationData* 
 	statusObjectsAreas.clear();
 	QFontMetrics fontMetric(qApp->font());
 	int size = fontMetric.height() * 2; 					// width and height for progress arc
-	int spanAngle, x, y, textWidth;
+	int spanAngle, x, y, textWidth, nameWidth;
 	int blockSize, horizontalCount;
 	QRect progress;
 
@@ -87,6 +87,8 @@ void drawStatusObjects(std::vector<QRect>& statusObjectsAreas, UtilizationData* 
 			textWidth = fontMetric.horizontalAdvance("100%");	// calc max width
 		else
 			textWidth = fontMetric.horizontalAdvance("00000 / 00000 MB");
+		nameWidth = fontMetric.horizontalAdvance(utilizationData[GPU].name.c_str());
+		textWidth = textWidth > nameWidth ? textWidth : nameWidth;
 		blockSize = size + STATUS_OBJECT_TEXT_OFFSET + textWidth + STATUS_OBJECT_OFFSET;
 		horizontalCount = (width + STATUS_OBJECT_OFFSET) / blockSize; // (width + STATUS_OBJECT_OFFSET) because last element has offset
 
@@ -109,11 +111,15 @@ void drawStatusObjects(std::vector<QRect>& statusObjectsAreas, UtilizationData* 
 		p->drawEllipse(x, y, size, size);
 
 		if (utilizationData[GPU].maximum == 100.0f)
-			p->drawText(x + size + STATUS_OBJECT_TEXT_OFFSET, y + size / 2 + fontMetric.xHeight() / 2,
-						(std::to_string(utilizationData[GPU].level) + "%").c_str());
+		{
+			p->drawText(x + size + STATUS_OBJECT_TEXT_OFFSET, y + size / 2 - fontMetric.xHeight() / 2, (utilizationData[GPU].name.c_str()));
+			p->drawText(x + size + STATUS_OBJECT_TEXT_OFFSET, y + size / 2 + int(fontMetric.xHeight() * 1.5), (std::to_string(utilizationData[GPU].level) + "%").c_str());
+		}
 		else
-			p->drawText(x + size + STATUS_OBJECT_TEXT_OFFSET, y + size / 2 + fontMetric.xHeight() / 2,
-						(std::to_string(utilizationData[GPU].level) + " / " + std::to_string(int(utilizationData[GPU].maximum)) + " MB").c_str());
+		{
+			p->drawText(x + size + STATUS_OBJECT_TEXT_OFFSET, y + size / 2 - fontMetric.xHeight() / 2, (utilizationData[GPU].name.c_str()));
+			p->drawText(x + size + STATUS_OBJECT_TEXT_OFFSET, y + size / 2 + int(fontMetric.xHeight() * 1.5), (std::to_string(utilizationData[GPU].level) + " / " + std::to_string(int(utilizationData[GPU].maximum)) + " MB").c_str());
+		}
 
 		statusObjectsAreas.emplace_back(x, y, blockSize, size);
 	}
@@ -189,13 +195,17 @@ UtilizationWorker::~UtilizationWorker()
 void GPUUtilizationWorker::receiveData()
 {
 	std::vector<std::string> lines = split(exec(NVSMI_CMD_GPU_UTILIZATION), "\n");
+	std::vector<std::string> GPUs = split(streamline(exec(NVSMI_LIST_GPUS)), "\n");
 	// fake, "emulated" GPUs
 //    lines[2] = std::to_string(50 + rand() % 20) + " %";
 //    lines.push_back(std::to_string(30 + rand() % 10) + " %");
 //    lines.push_back(std::to_string(70 + rand() % 30) + " %");
 //    lines.push_back("");
 	for (size_t i = 1; i < lines.size() - 1; i++)
+	{
+		utilizationData[i - 1].name = GPUs[i];
 		utilizationData[i - 1].level = std::atoi(split(lines[i], " ")[0].c_str());
+	}
 }
 
 MemoryUtilizationWorker::MemoryUtilizationWorker() : UtilizationWorker()
@@ -211,6 +221,7 @@ MemoryUtilizationWorker::~MemoryUtilizationWorker()
 void MemoryUtilizationWorker::receiveData()
 {
 	std::vector<std::string> lines = split(exec(NVSMI_CMD_MEM_UTILIZATION), "\n"), data;
+	std::vector<std::string> GPUs = split(streamline(exec(NVSMI_LIST_GPUS)), "\n");
 	for (size_t GPU = 1; GPU < lines.size() - 1; GPU++)
 	{
 		data = split(lines[GPU], ", ");
@@ -219,6 +230,7 @@ void MemoryUtilizationWorker::receiveData()
 		memoryData[GPU - 1].used = std::atoi(split(data[3], " ")[0].c_str());
 		utilizationData[GPU - 1].level = memoryData[GPU - 1].used;
 		utilizationData[GPU - 1].maximum = memoryData[GPU - 1].total;
+		utilizationData[GPU - 1].name = GPUs[GPU];
 	}
 }
 
@@ -258,7 +270,10 @@ void GPUUtilization::mouseMoveEvent(QMouseEvent* event)
 	{
 		if ((area.x() <= event->x()) && (area.x() + area.width() >= event->x()) && (area.y() <= event->y()) && (area.y() + area.height() >= event->y()))
 		{
-			QToolTip::showText(event->globalPos(), "GPU Utilization: " + QString::number(worker->utilizationData[i].level) + "\nAverage: " + QString::number(worker->utilizationData[i].avgLevel) + "\nMin: " + QString::number(worker->utilizationData[i].minLevel) + "\nMax: " + QString::number(worker->utilizationData[i].maxLevel));
+			QToolTip::showText(event->globalPos(), "GPU Utilization: " + QString::number(worker->utilizationData[i].level) +
+												   "\nAverage: " + QString::number(worker->utilizationData[i].avgLevel) +
+												   "\nMin: " + QString::number(worker->utilizationData[i].minLevel) +
+												   "\nMax: " + QString::number(worker->utilizationData[i].maxLevel));
 
 			return;
 		}
@@ -278,8 +293,13 @@ void MemoryUtilization::mouseMoveEvent(QMouseEvent* event)
 		if ((area.x() <= event->x()) && (area.x() + area.width() >= event->x()) && (area.y() <= event->y()) && (area.y() + area.height() >= event->y()))
 		{
 			QToolTip::showText(event->globalPos(),
-							   "Memory Utilization: " + QString::number(worker->utilizationData[i].level) + "\nAverage: " + QString::number(worker->utilizationData[i].avgLevel) + "\nMin: " + QString::number(worker->utilizationData[i].minLevel) + "\nMax: " + QString::number(worker->utilizationData[i].maxLevel) + "\nTotal: " + QString::number(((MemoryUtilizationWorker*)worker)->memoryData[i].total) + " MiB" + "\nFree: " + QString::number(((MemoryUtilizationWorker*)worker)->memoryData[i].free) + " MiB" + "\nUsed: " +
-							   QString::number(((MemoryUtilizationWorker*)worker)->memoryData[i].used) + " MiB");
+							   "Memory Utilization: " + QString::number(worker->utilizationData[i].level) +
+							   "\nAverage: " + QString::number(worker->utilizationData[i].avgLevel) +
+							   "\nMin: " + QString::number(worker->utilizationData[i].minLevel) +
+							   "\nMax: " + QString::number(worker->utilizationData[i].maxLevel) +
+							   "\nTotal: " + QString::number(((MemoryUtilizationWorker*)worker)->memoryData[i].total) + " MiB" +
+							   "\nFree: " + QString::number(((MemoryUtilizationWorker*)worker)->memoryData[i].free) + " MiB" +
+							   "\nUsed: " +  QString::number(((MemoryUtilizationWorker*)worker)->memoryData[i].used) + " MiB");
 
 			return;
 		}

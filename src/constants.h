@@ -9,17 +9,18 @@
 #define NVSMI_CMD_PROCESSES "nvidia-smi pmon -c 1 -s mu"
 #define NVSMI_CMD_GPU_UTILIZATION "nvidia-smi --query-gpu=utilization.gpu --format=csv"
 #define NVSMI_CMD_MEM_UTILIZATION "nvidia-smi --query-gpu=utilization.memory,memory.total,memory.free,memory.used --format=csv"
+#define NVSMI_LIST_GPUS "nvidia-smi --query-gpu=gpu_name --format=csv"
 
 // nvidia-smi command output indices
-#define NVSMI_GPUIDX 0
-#define NVSMI_PID    1
-#define NVSMI_TYPE   2
-#define NVSMI_FB	 3
-#define NVSMI_SM     4
-#define NVSMI_MEM    5
-#define NVSMI_ENC    6
-#define NVSMI_DEC    7
-#define NVSMI_NAME   8
+#define NVSMI_GPUINDEX	0
+#define NVSMI_PID    	1
+#define NVSMI_TYPE   	2
+#define NVSMI_FB	 	3
+#define NVSMI_SM     	4
+#define NVSMI_MEM    	5
+#define NVSMI_ENC    	6
+#define NVSMI_DEC    	7
+#define NVSMI_NAME   	8
 
 // nvidia-system-monitor processes columns
 #define NVSM_GPUIDX 2

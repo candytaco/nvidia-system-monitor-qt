@@ -43,9 +43,10 @@ MainWindow::MainWindow(QWidget*) {
     tabs->addTab(processes, "Processes");
     tabs->addTab(gwidget, "GPU Utilization");
     layout->addWidget(tabs);
-    
+
     auto *window = new QWidget();
     window->setLayout(layout);
+    window->setMinimumHeight(800);
     setCentralWidget(window);
     
     connect(processes->worker, &ProcessesWorker::dataUpdated, processes, &ProcessesTableView::onDataUpdated);

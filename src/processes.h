@@ -8,14 +8,15 @@
 
 struct ProcessList {
 	std::string name;
-	std::string type; // C or G
-	std::string gpuIdx, pid, sm, mem, enc, dec, vRAM; // integers
+	std::string type; // compute, graphics, or both
+	std::string GPUIndex, pid, computeUse, memoryUse, encoding, decoding, vRAM; // integers
+	std::string GPUName;
 
 	ProcessList(const std::string &name, const std::string &type,
 				const std::string &gpuIdx, const std::string &pid,
 				const std::string &sm, const std::string &mem,
 				const std::string &enc, const std::string &dec,
-				const std::string& vRAM);
+				const std::string& vRAM, const std::string &GPUName);
 };
 
 class ProcessesWorker : public Worker {
