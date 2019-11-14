@@ -46,7 +46,6 @@ MainWindow::MainWindow(QWidget*) {
 
     auto *window = new QWidget();
     window->setLayout(layout);
-    window->setMinimumHeight(800);
     setCentralWidget(window);
     
     connect(processes->worker, &ProcessesWorker::dataUpdated, processes, &ProcessesTableView::onDataUpdated);
@@ -58,6 +57,8 @@ MainWindow::MainWindow(QWidget*) {
     workerThread->workers[1] = gutilization->worker;
     workerThread->workers[2] = mutilization->worker;
     workerThread->start();
+
+    setMinimumSize(800, 800);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
