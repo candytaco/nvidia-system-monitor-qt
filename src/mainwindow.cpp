@@ -10,13 +10,14 @@
 #include "processes.h"
 #include "utilization.h"
 
-MainWindow::MainWindow(QWidget*) { 
-	auto *layout = new QVBoxLayout;
+MainWindow::MainWindow(QWidget*)
+{
+	auto* layout = new QVBoxLayout;
 	layout->setSpacing(0);
 	layout->setMargin(0);
 
-	auto *menuBar = new QMenuBar;
-	auto *menu = new QMenu("&Help");
+	auto* menuBar = new QMenuBar;
+	auto* menu = new QMenu("&Help");
 
 	menu->addAction("&About NVSM", this, SLOT(about()), Qt::CTRL + Qt::Key_A);
 	menu->addAction("&Help", this, SLOT(help()), Qt::CTRL + Qt::Key_H);
@@ -28,15 +29,15 @@ MainWindow::MainWindow(QWidget*) {
 	menuBar->addMenu(menu);
 	layout->addWidget(menuBar);
 
-	auto *processes = new ProcessesTableView;
+	auto* processes = new ProcessesTableView;
 
-	auto *gwidget = new QWidget();
-	auto *glayout = new QVBoxLayout;
-	auto *gutilization = new GPUUtilization;
+	auto* gwidget = new QWidget();
+	auto* glayout = new QVBoxLayout;
+	auto* gutilization = new GPUUtilization;
 	glayout->addWidget(gutilization);
 	glayout->setMargin(32);
 	gwidget->setLayout(glayout);
-	auto *mutilization = new MemoryUtilization;
+	auto* mutilization = new MemoryUtilization;
 	glayout->addWidget(mutilization);
 
 	tabs = new QTabWidget();
@@ -44,7 +45,7 @@ MainWindow::MainWindow(QWidget*) {
 	tabs->addTab(gwidget, "GPU Utilization");
 	layout->addWidget(tabs);
 
-	auto *window = new QWidget();
+	auto* window = new QWidget();
 	window->setLayout(layout);
 	setCentralWidget(window);
 
@@ -58,32 +59,29 @@ MainWindow::MainWindow(QWidget*) {
 	workerThread->workers[2] = mutilization->worker;
 	workerThread->start();
 
-	adjustSize()
 }
 
-void MainWindow::closeEvent(QCloseEvent *event) {
+void MainWindow::closeEvent(QCloseEvent* event)
+{
 	hide();
 	workerThread->running = false;
 	while (workerThread->isRunning()); // waiting for all workers to be safely removed
 	event->accept();
 }
 
-void MainWindow::about() {
-	QMessageBox::information(
-		nullptr,
-		"About",
-		R"(<font size=4><b>NVIDIA System Monitor</b></font>
+void MainWindow::about()
+{
+	QMessageBox::information(nullptr, "About", R"(<font size=4><b>NVIDIA System Monitor</b></font>
 		<br>Version 1.1<br>The app monitors your Nvidia GPU<br><br>Developed by Daniel Bernar
 		<br><a href='dbcongard@gmail.com'>dbcongard@gmail.com</a>
-		<br><br><a href='https://github.com/congard/nvidia-system-monitor-qt/blob/master/DONATE.md'>Donate</a> <a href='https://github.com/congard/nvidia-system-monitor-qt'>GitHub</a> <a href='https://t.me/congard'>Telegram</a>)"
-	);
+		<br><br><a href='https://github.com/congard/nvidia-system-monitor-qt/blob/master/DONATE.md'>Donate</a> <a href='https://github.com/congard/nvidia-system-monitor-qt'>GitHub</a> <a href='https://t.me/congard'>Telegram</a>)");
 }
 
-void MainWindow::help() {
+void MainWindow::help()
+{
 	QMessageBox msgBox;
 	msgBox.setText("<font size=4><b>Help</b></font>");
-	msgBox.setInformativeText(
-		R"(<b>Settings</b><br>By default, update delay is 2 seconds (2000 ms).
+	msgBox.setInformativeText(R"(<b>Settings</b><br>By default, update delay is 2 seconds (2000 ms).
 		You most likely want to change this value to, for example, 500 ms. To do this, create file <i>config</i> in the folder
 		<i>~/.config/nvidia-system-monitor</i>
 		<br><br><b>config values</b>
@@ -105,7 +103,6 @@ void MainWindow::help() {
 		</ul><br>
 		<b>GPU Utilization</b><br>This section displays a graph of gpu utilization.
 		<br><br><b>Memory Utilization</b><br>This section displays a graph of memory utilization.
-		<br><br><a href='https://github.com/congard/nvidia-system-monitor-qt/blob/master/DONATE.md'>Donate</a> <a href='https://github.com/congard/nvidia-system-monitor-qt'>GitHub</a> <a href='https://t.me/congard'>Telegram</a>)"
-	);
+		<br><br><a href='https://github.com/congard/nvidia-system-monitor-qt/blob/master/DONATE.md'>Donate</a> <a href='https://github.com/congard/nvidia-system-monitor-qt'>GitHub</a> <a href='https://t.me/congard'>Telegram</a>)");
 	msgBox.exec();
 }
